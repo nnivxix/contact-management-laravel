@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserRegisterRequest;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserRegisterRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UserController extends Controller
 {
@@ -15,6 +16,8 @@ class UserController extends Controller
         $validated = $request->validated();
 
         $user = new User($validated);
+
+
         $user->password = Hash::make($validated['password']);
         $user->save();
 
