@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\User;
+use Database\Seeders\UserSeeder;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class userTest extends TestCase
 {
@@ -58,5 +60,24 @@ class userTest extends TestCase
                     ]
                 ]
             ]);
+    }
+
+    public function testLoginSucces()
+    {
+        $this->seed([UserSeeder::class]);
+        $this->post('/api/users/login', [
+            'username' => 'hanasa',
+            'password' => 'password'
+        ])
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'username' => 'hanasa',
+                    'name' => 'hanasa'
+                ]
+            ]);
+
+        $user = User::where('username', 'hanasa')->first();
+        self::assertNotNull($user->token);
     }
 }
