@@ -13,4 +13,9 @@ class Contact extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class, 'contact_id', 'id');
+    }
 }
