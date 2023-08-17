@@ -17,4 +17,9 @@ class User extends Authenticatable
     protected $keyType = 'int';
     public $timestamps = true;
     public $incrementing = true;
+
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class, 'user_id', 'id');
+    }
 }
