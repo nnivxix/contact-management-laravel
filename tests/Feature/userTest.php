@@ -15,6 +15,7 @@ class userTest extends TestCase
             'name'     => 'hanasa',
             'password' => 'rahasia'
         ])
+            ->assertStatus(201)
             ->assertJson([
                 'data' => [
                     'username' => 'hanasa',
@@ -30,9 +31,14 @@ class userTest extends TestCase
             'name'     => '',
             'password' => ''
         ])
+            ->assertStatus(400)
             ->assertJson([
-                'data' => []
-            ])
-            ->assertStatus(400);
+                'errors' => [
+                    'username' => ['The username field is required.'],
+                    'name'     => ['The name field is required.'],
+                    'password' => ['The password field is required.']
+
+                ]
+            ]);
     }
 }

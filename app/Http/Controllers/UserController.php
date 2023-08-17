@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function register(UserRegisterRequest $request): UserResource
+    public function register(UserRegisterRequest $request)
     {
         $validated = $request->validated();
 
@@ -18,6 +18,6 @@ class UserController extends Controller
         $user->password = Hash::make($validated['password']);
         $user->save();
 
-        return new UserResource($user);
+        return (new UserResource($user))->response()->setStatusCode(201);
     }
 }
