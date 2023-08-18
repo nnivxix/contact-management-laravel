@@ -12,32 +12,26 @@ class ApiAuth
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // set default variable
         $token = $request->header('Authorization');
         $authenticate = true;
-
-        // if token is null
-        if (!$token) {
-            $authenticate = false;
-        }
-
         $user = User::where('token', $token)->first();
 
-        // if user not found
-        if (!$user) {
+        // if token is null or user is not found
+        if (!$token || !$user) {
             $authenticate = false;
-        } else {
-            Auth::login($user);
+            return response()->json([
+                "errors" => [
+                    "message" => [
+                        "unauthorized"
+                    ]
+                ]
+            ])->setStatusCode(401);
         }
 
         if ($authenticate) {
+            Auth::login($user);
             return $next($request);
         }
-        return response()->json([
-            "errors" => [
-                "message" => [
-                    "unauthorized"
-                ]
-            ]
-        ])->setStatusCode(401);
     }
 }
