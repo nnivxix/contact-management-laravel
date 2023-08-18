@@ -129,4 +129,20 @@ class userTest extends TestCase
                 ]
             ]);
     }
+
+    public function testUnauthorizedCurrentUser()
+    {
+        $this->seed([UserSeeder::class]);
+
+        // without token
+        $this->get('/api/users/current')
+            ->assertStatus(401)
+            ->assertJson([
+                'errors' => [
+                    'message' => [
+                        'unauthorized'
+                    ]
+                ]
+            ]);
+    }
 }
