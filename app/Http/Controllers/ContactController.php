@@ -28,7 +28,7 @@ class ContactController extends Controller
 
     public function show(string $id)
     {
-        $contact = Contact::query()->whereId($id);
+        $contact = Contact::query()->whereId($id)->first();
 
         if (!$contact) {
             throw new HttpResponseException(response()->json([
