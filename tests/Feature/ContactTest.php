@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\Contact;
-use Database\Seeders\ContactSeeder;
 use Tests\TestCase;
+use App\Models\Contact;
 use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\DB;
+use Database\Seeders\ContactSeeder;
+use Illuminate\Support\Facades\Log;
+use Database\Seeders\ContactsSeeder;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -223,5 +225,62 @@ class ContactTest extends TestCase
                     ]
                 ]
             ]);
+    }
+
+    public function testSearchByFirstName()
+    {
+        $this->seed([UserSeeder::class, ContactsSeeder::class]);
+
+        $response = $this->get('/api/contacts?name=first', [
+            'Authorization' => 'test'
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        self::assertEquals(10, count($response['data']));
+        self::assertEquals(20, $response['meta']['total']);
+    }
+
+    public function testSearchByLastName()
+    {
+        $this->seed([UserSeeder::class, ContactsSeeder::class]);
+
+        $response = $this->get('/api/contacts?name=last', [
+            'Authorization' => 'test'
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        self::assertEquals(10, count($response['data']));
+        self::assertEquals(20, $response['meta']['total']);
+    }
+
+    public function testSearchNotFound()
+    {
+        $this->seed([UserSeeder::class, ContactsSeeder::class]);
+
+        $response = $this->get('/api/contacts?name=salah', [
+            'Authorization' => 'test'
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        self::assertEquals(0, count($response['data']));
+        self::assertEquals(0, $response['meta']['total']);
+    }
+
+    public function testSearchWithPage()
+    {
+        $this->seed([UserSeeder::class, ContactsSeeder::class]);
+
+        $response = $this->get('/api/contacts?page=2', [
+            'Authorization' => 'test'
+        ])
+            ->assertStatus(200)
+            ->json();
+
+        self::assertEquals(10, count($response['data']));
+        self::assertEquals(20, $response['meta']['total']);
+        self::assertEquals(2, $response['meta']['current_page']);
     }
 }

@@ -33,7 +33,7 @@ Route::middleware([ApiAuth::class])->group(function () {
     });
 
     Route::controller(ContactController::class)->group(function () {
-        Route::post('/contacts', 'index');
+        Route::get('/contacts', 'index');
         Route::post('/contacts', 'store');
         Route::get('/contacts/{id}', 'show');
         Route::put('/contacts/{id}', 'update');
