@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ContactResource;
 use App\Http\Requests\ContactRequest;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ContactController extends Controller
@@ -34,7 +32,7 @@ class ContactController extends Controller
             throw new HttpResponseException(response()->json([
                 'errors' => [
                     "message" => [
-                        "not found"
+                        "contact not found"
                     ]
                 ]
             ])->setStatusCode(404));
@@ -52,7 +50,7 @@ class ContactController extends Controller
             throw new HttpResponseException(response()->json([
                 'errors' => [
                     "message" => [
-                        "not found"
+                        "contact not found"
                     ]
                 ]
             ])->setStatusCode(404));
@@ -73,7 +71,7 @@ class ContactController extends Controller
             throw new HttpResponseException(response()->json([
                 'errors' => [
                     "message" => [
-                        "not found"
+                        "contact not found"
                     ]
                 ]
             ])->setStatusCode(404));

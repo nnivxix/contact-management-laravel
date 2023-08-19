@@ -103,7 +103,7 @@ class ContactTest extends TestCase
             ->assertJson([
                 "errors" => [
                     "message" => [
-                        "not found"
+                        "contact not found"
                     ]
                 ]
             ]);
@@ -180,6 +180,47 @@ class ContactTest extends TestCase
                 "errors" => [
                     'first_name' => ['The first name field is required.'],
                     'phone'      => ['The phone field is required.'],
+                ]
+            ]);
+    }
+
+    public function testSuccessDelete()
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+
+        $contact = Contact::query()->limit(1)->first();
+
+        $this->delete(
+            "/api/contacts/$contact->id",
+            [],
+            [
+                "Authorization" => "test"
+            ]
+        )
+            ->assertStatus(200)
+            ->assertJson([
+                'message' => "Contact remove successfuly"
+            ]);
+    }
+
+    public function testDeleteNotFound()
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+
+        $randomId = rand(1, 99);
+        $this->delete(
+            "/api/contacts/$randomId",
+            [],
+            [
+                "Authorization" => "test"
+            ]
+        )
+            ->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    'message' => [
+                        "contact not found"
+                    ]
                 ]
             ]);
     }

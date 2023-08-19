@@ -36,5 +36,6 @@ Route::middleware([ApiAuth::class])->group(function () {
         Route::post('/contacts', 'store');
         Route::get('/contacts/{id}', 'show');
         Route::put('/contacts/{id}', 'update');
+        Route::delete('/contacts/{id}', 'destroy');
     });
 });
