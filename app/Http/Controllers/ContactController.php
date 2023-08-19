@@ -7,14 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ContactResource;
-use App\Http\Requests\ContactCreateRequest;
+use App\Http\Requests\ContactRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ContactController extends Controller
 {
 
-    public function store(ContactCreateRequest $request): JsonResponse
+    public function store(ContactRequest $request): JsonResponse
     {
         $user = Auth::user();
         $validated = $request->validated();
@@ -43,9 +43,25 @@ class ContactController extends Controller
         return new ContactResource($contact);
     }
 
-    public function update(Request $request, string $id)
+    public function update(ContactRequest $request, string $id)
     {
-        //
+        $contact = Contact::query()->whereId($id)->first();
+        $validated = $request->validated();
+
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    "message" => [
+                        "not found"
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+
+        $contact->fill($validated);
+        $contact->save();
+
+        return new ContactResource($contact);
     }
 
 
