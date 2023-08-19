@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ApiAuth;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,5 +29,9 @@ Route::middleware([ApiAuth::class])->group(function () {
     Route::controller(UserController::class)->group(function () {
         Route::get('/users/current', 'show');
         Route::put('/users/current', 'update');
+    });
+
+    Route::controller(ContactController::class)->group(function () {
+        Route::post('/contacts', 'store');
     });
 });
