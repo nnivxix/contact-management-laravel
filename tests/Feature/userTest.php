@@ -7,6 +7,7 @@ use App\Models\User;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 
 class userTest extends TestCase
 {
@@ -187,5 +188,32 @@ class userTest extends TestCase
 
         $newUser = User::where('username', 'hanasa')->first();
         $this->assertNotEquals($oldUser->name, $newUser->name);
+    }
+
+    public function testUpdatePasswordSucces()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $oldUser = User::where('username', 'hanasa')->first();
+
+        $this->put(
+            '/api/users/current',
+            [
+                'password' => Hash::make('baru')
+            ],
+            [
+                'Authorization' => 'test'
+            ]
+        )
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'username' => 'hanasa',
+                    'name'     => 'hanasa'
+                ]
+            ]);
+
+        $newUser = User::where('username', 'hanasa')->first();
+        $this->assertNotEquals($oldUser->password, $newUser->password);
     }
 }
