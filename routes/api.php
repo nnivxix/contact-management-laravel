@@ -29,6 +29,7 @@ Route::middleware([ApiAuth::class])->group(function () {
     Route::controller(UserController::class)->group(function () {
         Route::get('/users/current', 'show');
         Route::put('/users/current', 'update');
+        Route::delete('/users/logout', 'destroy');
     });
 
     Route::controller(ContactController::class)->group(function () {
