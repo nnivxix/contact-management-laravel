@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UserController extends Controller
@@ -50,6 +51,25 @@ class UserController extends Controller
     public function show(Request $request): UserResource
     {
         $user = Auth::user();
+        return new UserResource($user);
+    }
+
+    public function update(UserUpdateRequest $request): UserResource
+    {
+        $validated = $request->validated();
+        $user = Auth::user(); // current user log in
+
+        // check if input name is not null
+        if (isset($validated['name'])) {
+            $user->name = $validated['name'];
+        }
+
+        // check if input password is not null
+        if (isset($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
         return new UserResource($user);
     }
 }
