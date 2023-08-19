@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class userTest extends TestCase
+class UserTest extends TestCase
 {
     public function testUserRegisterSuccess()
     {
