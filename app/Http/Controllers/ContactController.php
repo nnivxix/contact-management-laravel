@@ -3,14 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\ContactResource;
 use App\Http\Requests\ContactRequest;
+use App\Http\Resources\ContactResource;
+use App\Http\Resources\ContactCollection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ContactController extends Controller
 {
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $page = $request->input('page', 1);
+        $size = $request->input('size', 10);
+
+        $contacts = Contact::query()
+            ->where('user_id', $user->id)
+            ->when(
+                $request->has('name'),
+                function ($query) use ($request) {
+                    $query->where('first_name', 'like', '%' .  $request->input('name') . '%')
+                        ->orWhere('last_name', 'like', '%' .  $request->input('name') . '%');
+                }
+            )
+            ->when(
+                $request->has('email'),
+                function ($query) use ($request) {
+                    $query->where('email', 'like', '%' .  $request->input('email') . '%');
+                }
+            )
+            ->when(
+                $request->has('phone'),
+                function ($query) use ($request) {
+                    $query->where('phone', 'like', '%' .  $request->input('phone') . '%');
+                }
+            )
+            ->paginate(perPage: $size, page: $page);
+
+        return ContactResource::collection($contacts);
+    }
 
     public function store(ContactRequest $request): JsonResponse
     {
