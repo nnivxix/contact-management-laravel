@@ -17,9 +17,8 @@ class UserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'max:100',  'unique:users'],
-            'name'     => ['required', 'max:100'],
-            'password' => ['required', 'max:100'],
+            'name'     => ['max:100'],
+            'password' => ['max:100'],
         ];
     }
     protected function failedValidation(Validator $validator)
