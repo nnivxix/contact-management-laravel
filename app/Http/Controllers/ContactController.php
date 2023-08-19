@@ -65,8 +65,25 @@ class ContactController extends Controller
     }
 
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $contact = Contact::query()->whereId($id)->first();
+
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    "message" => [
+                        "not found"
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+
+        $contact->delete();
+        return response()
+            ->json([
+                'message' => "Contact remove successfuly"
+            ])
+            ->setStatusCode(200);
     }
 }
