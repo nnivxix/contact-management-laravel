@@ -35,5 +35,6 @@ Route::middleware([ApiAuth::class])->group(function () {
     Route::controller(ContactController::class)->group(function () {
         Route::post('/contacts', 'store');
         Route::get('/contacts/{id}', 'show');
+        Route::put('/contacts/{id}', 'update');
     });
 });
