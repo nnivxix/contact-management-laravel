@@ -4,10 +4,11 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Database\Seeders\UserSeeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 
 class userTest extends TestCase
 {
@@ -215,5 +216,28 @@ class userTest extends TestCase
 
         $newUser = User::where('username', 'hanasa')->first();
         $this->assertNotEquals($oldUser->password, $newUser->password);
+    }
+
+    public function testUpdateCurrentUserFailed()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->put(
+            '/api/users/current',
+            [
+                'name' => Str::random(102),
+            ],
+            [
+                'Authorization' => 'test'
+            ]
+        )
+            ->assertStatus(400)
+            ->assertJson([
+                'errors' => [
+                    'name' => [
+                        'The name field must not be greater than 100 characters.'
+                    ]
+                ]
+            ]);
     }
 }
