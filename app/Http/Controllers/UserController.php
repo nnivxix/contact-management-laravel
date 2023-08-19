@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +17,14 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UserController extends Controller
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        DB::delete('delete from contacts');
+        DB::delete('delete from addresses');
+        DB::delete('delete from users');
+    }
+
     public function register(UserRegisterRequest $request)
     {
         $validated = $request->validated();
@@ -80,8 +89,10 @@ class UserController extends Controller
         $user->token = null;
         $user->save();
 
-        return response()->json([
-            'message' => 'Logout successful',
-        ])->setStatusCode(200);
+        return response()
+            ->json([
+                'message' => 'Logout successful',
+            ])
+            ->setStatusCode(200);
     }
 }

@@ -6,12 +6,20 @@ use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Database\Seeders\UserSeeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UserTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        DB::delete('delete from contacts');
+        DB::delete('delete from addresses');
+        DB::delete('delete from users');
+    }
     public function testUserRegisterSuccess()
     {
         $this->post('/api/users/register', [
@@ -237,6 +245,46 @@ class UserTest extends TestCase
                     'name' => [
                         'The name field must not be greater than 100 characters.'
                     ]
+                ]
+            ]);
+    }
+
+    public function testSuccessLogout()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->delete(
+            uri: '/api/users/logout',
+            headers: [
+                'Authorization' => 'test'
+            ]
+        )
+            ->assertStatus(200)
+            ->assertJson([
+                'message' => 'Logout successful',
+            ]);
+
+        $user = User::where('username', 'hanasa')->first();
+        $this->assertNull($user->token);
+    }
+
+    public function testFailedLogout()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->delete(
+            uri: '/api/users/logout',
+            headers: [
+                'Authorization' => 'salah'
+            ]
+        )
+            ->assertStatus(401)
+            ->assertJson([
+                "errors" => [
+                    'message' => [
+                        "unauthorized"
+                    ],
+
                 ]
             ]);
     }
