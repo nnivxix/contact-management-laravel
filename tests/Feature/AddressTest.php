@@ -26,7 +26,7 @@ class AddressTest extends TestCase
 
         $contact = Contact::query()->limit(1)->first();
 
-        $this->post("/api/contacts/$contact->id/address", [
+        $this->post("/api/contacts/$contact->id/addresses", [
             'city'    => 'test',
             'country' => 'test'
         ], [
@@ -47,7 +47,7 @@ class AddressTest extends TestCase
 
         $contact = Contact::query()->limit(1)->first();
 
-        $this->post("/api/contacts/$contact->id/address", [
+        $this->post("/api/contacts/$contact->id/addresses", [
             'city'    => 'test',
             'country' => ''
         ], [
@@ -68,7 +68,7 @@ class AddressTest extends TestCase
         $this->seed([UserSeeder::class, ContactSeeder::class]);
         $randomId = rand(1, 109);
 
-        $this->post("/api/contacts/$randomId/address", [
+        $this->post("/api/contacts/$randomId/addresses", [
             'city'    => 'test',
             'country' => 'test'
         ], [

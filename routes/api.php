@@ -42,6 +42,6 @@ Route::middleware([ApiAuth::class])->group(function () {
     });
 
     Route::controller(AddressController::class)->group(function () {
-        Route::post('/contacts/{id}/address', 'store');
+        Route::post('/contacts/{id}/addresses', 'store');
     });
 });

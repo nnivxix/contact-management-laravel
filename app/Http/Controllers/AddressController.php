@@ -26,7 +26,6 @@ class AddressController extends Controller
 
     public function store(AddressRequest $request, int $id)
     {
-        $user = Auth::user();
         $validated = $request->validated();
         $contact = Contact::where('id', $id)->first();
 
