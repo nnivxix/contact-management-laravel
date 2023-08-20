@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\Contact;
-use Database\Seeders\ContactSeeder;
-use Database\Seeders\UserSeeder;
 use Tests\TestCase;
+use App\Models\Address;
+use App\Models\Contact;
+use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\DB;
+use Database\Seeders\AddressSeeder;
+use Database\Seeders\ContactSeeder;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -79,6 +81,39 @@ class AddressTest extends TestCase
                 'errors' => [
                     'message' => [
                         'contact not found'
+                    ]
+                ]
+            ]);
+    }
+
+    public function testGetAddressContact(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+        $this->get("/api/contacts/$contact->id/addresses/", [
+            "Authorization" => 'test'
+        ])
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    "city"    => "test",
+                    "country" => "test"
+                ]
+            ]);
+    }
+
+    public function testGetAddressContactButContactNotYetCreated(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $randomId = rand(1, 99);
+        $this->get("/api/contacts/$randomId/addresses/", [
+            "Authorization" => 'test'
+        ])
+            ->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "contact not found"
                     ]
                 ]
             ]);

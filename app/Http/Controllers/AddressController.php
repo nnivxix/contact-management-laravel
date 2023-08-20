@@ -10,6 +10,7 @@ use App\Http\Requests\AddressRequest;
 use App\Http\Requests\ContactRequest;
 use App\Http\Resources\AddressResource;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AddressController extends Controller
 {
@@ -46,9 +47,34 @@ class AddressController extends Controller
         return (new AddressResource($address))->response()->setStatusCode(201);
     }
 
-    public function show(string $id)
+    public function show(int $id)
     {
-        //
+        $address = Address::where('contact_id', $id)->first();
+        $contact = Contact::where('id', $id)->first();
+
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    "message" => [
+                        "contact not found"
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+
+        /*
+        if (!$address) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    "message" => [
+                        "address not yet created"
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+        */
+
+        return AddressResource::make($address);
     }
 
     public function edit(string $id)
