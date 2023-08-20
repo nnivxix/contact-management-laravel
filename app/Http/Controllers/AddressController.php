@@ -107,6 +107,23 @@ class AddressController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        $address = Address::query()->where('contact_id', $id)->first();
+
+        if (!$address) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    "message" => [
+                        "address not yet created"
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+
+        $address->delete();
+        return response()
+            ->json([
+                'message' => "Address remove successfuly"
+            ])
+            ->setStatusCode(200);
     }
 }
