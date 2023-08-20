@@ -28,7 +28,7 @@ class AddressController extends Controller
     {
         $user = Auth::user();
         $validated = $request->validated();
-        $contact = Contact::find($id)->first();
+        $contact = Contact::where('id', $id)->first();
 
         if (!$contact) {
             throw new HttpResponseException(response()->json([
