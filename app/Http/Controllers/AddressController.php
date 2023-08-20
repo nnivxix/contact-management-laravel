@@ -62,7 +62,7 @@ class AddressController extends Controller
             ])->setStatusCode(404));
         }
 
-        /*
+
         if (!$address) {
             throw new HttpResponseException(response()->json([
                 'errors' => [
@@ -72,7 +72,7 @@ class AddressController extends Controller
                 ]
             ])->setStatusCode(404));
         }
-        */
+
 
         return AddressResource::make($address);
     }

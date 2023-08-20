@@ -118,4 +118,23 @@ class AddressTest extends TestCase
                 ]
             ]);
     }
+
+    public function testGetAddressContactButAddressNotYetCreated(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+
+        $contact = Contact::query()->limit(1)->skip(1)->first();
+
+        $this->get("/api/contacts/$contact->id/addresses/", [
+            "Authorization" => 'test'
+        ])
+            ->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "address not yet created"
+                    ]
+                ]
+            ]);
+    }
 }
