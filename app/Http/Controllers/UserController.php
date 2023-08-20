@@ -17,14 +17,6 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UserController extends Controller
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        DB::delete('delete from contacts');
-        DB::delete('delete from addresses');
-        DB::delete('delete from users');
-    }
-
     public function register(UserRegisterRequest $request)
     {
         $validated = $request->validated();
