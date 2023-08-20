@@ -77,14 +77,32 @@ class AddressController extends Controller
         return AddressResource::make($address);
     }
 
-    public function edit(string $id)
+    public function update(AddressRequest $request, string $id): AddressResource
     {
-        //
-    }
+        $validated = $request->validated();
+        $contact = Contact::query()->where('id', $id)->first();
+        $address = Address::query()->where('contact_id', $id)->first();
 
-    public function update(Request $request, string $id)
-    {
-        //
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    "message" => [
+                        "contact not found"
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+
+        if (!$address) {
+            $address = new Address($validated);
+            $address->contact_id = $id;
+            $address->save();
+            return new AddressResource($address);
+        }
+
+        $address->update($validated);
+
+        return new AddressResource($address);
     }
 
     public function destroy(string $id)

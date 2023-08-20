@@ -137,4 +137,86 @@ class AddressTest extends TestCase
                 ]
             ]);
     }
+
+    public function testUpdateSuccess(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+
+        $contact = Contact::query()->limit(1)->first();
+
+        $this->put("/api/contacts/$contact->id/addresses", [
+            'city'    => 'update',
+            'country' => 'update'
+        ], [
+            'Authorization' => 'test'
+        ])
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'city'    => 'update',
+                    'country' => 'update'
+                ]
+            ]);
+    }
+
+    public function testUpdateFailed(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+
+        $contact = Contact::query()->limit(1)->first();
+
+        $this->put("/api/contacts/$contact->id/addresses", [
+            'city'    => 'update',
+            'country' => ''
+        ], [
+            'Authorization' => 'test'
+        ])
+            ->assertStatus(400)
+            ->assertJson([
+                'errors' => [
+                    'country' => ["The country field is required."]
+                ]
+            ]);
+    }
+
+    public function testUpdateNotFound(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+
+        $contact = Contact::query()->limit(1)->first();
+
+        $this->put("/api/contacts/$contact->id/addresses", [
+            'city'    => 'update',
+            'country' => ''
+        ], [
+            'Authorization' => 'test'
+        ])
+            ->assertStatus(400)
+            ->assertJson([
+                'errors' => [
+                    'country' => ["The country field is required."]
+                ]
+            ]);
+    }
+
+    public function testUpdateOnContactDoesnotHaveAnAddress(): void
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+
+        $contact = Contact::query()->skip(1)->limit(1)->first();
+
+        $this->put("/api/contacts/$contact->id/addresses", [
+            'city'    => 'baru',
+            'country' => 'baru'
+        ], [
+            'Authorization' => 'test'
+        ])
+            ->assertStatus(201)
+            ->assertJson([
+                'data' => [
+                    'city'    => 'baru',
+                    'country' => 'baru'
+                ]
+            ]);
+    }
 }
